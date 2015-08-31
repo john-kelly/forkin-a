@@ -621,11 +621,16 @@ class Atom extends Model
   startEditorWindow: ->
     {safeMode} = @getLoadSettings()
 
-    CommandInstaller = require './command-installer'
-    CommandInstaller.installAtomCommand false, (error) ->
-      console.warn error.message if error?
-    CommandInstaller.installApmCommand false, (error) ->
-      console.warn error.message if error?
+    console.log('atom:startEditorWindow CommandInstaller has been commented out.')
+    # FIXME Comment this out for now b/c we do not want the forked version of
+    # atom to be overwriting the atom.sh and apm.sh of my main installation of
+    # atom. This will be removed once we add a separate myapp.sh.
+    #
+    # CommandInstaller = require './command-installer'
+    # CommandInstaller.installAtomCommand false, (error) ->
+    #   console.warn error.message if error?
+    # CommandInstaller.installApmCommand false, (error) ->
+    #   console.warn error.message if error?
 
     @loadConfig()
     @keymaps.loadBundledKeymaps()

@@ -70,12 +70,18 @@ setupCrashReporter = ->
   crashReporter.start(productName: 'Atom', companyName: 'GitHub')
 
 setupAtomHome = ->
-  return if process.env.ATOM_HOME
+  # This could have already been setup in 2 ways
+  #     1.) The atom.sh sets up the ATOM_HOME for the linux OS
+  #     2.) The env variable ATOM_HOME was already set w/ a bash export
+  # FIXME Commenting this out for now to force loading of the .myapp dir.
+  # Eventually we will change all references to ATOM_HOME to MYAPP_HOME
 
-  atomHome = path.join(app.getHomeDir(), '.atom')
+  # return if process.env.ATOM_HOME
+
+  myappHome = path.join(app.getHomeDir(), '.myapp')
   try
-    atomHome = fs.realpathSync(atomHome)
-  process.env.ATOM_HOME = atomHome
+    myappHome = fs.realpathSync(myappHome)
+  process.env.ATOM_HOME = myappHome
 
 setupCompileCache = ->
   compileCache = require('../compile-cache')

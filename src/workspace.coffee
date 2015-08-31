@@ -124,7 +124,12 @@ class Workspace extends Model
     @emit 'editor-created', editor if includeDeprecatedAPIs
 
   installShellCommands: ->
-    require('./command-installer').installShellCommandsInteractively()
+    console.log('workspace:installShellCommands has been commented out.')
+    # FIXME Comment this out for now b/c we do not want the forked version of
+    # atom to be overwriting the atom.sh and apm.sh of my main installation of
+    # atom. This will be removed once we add a separate myapp.sh.
+    #
+    # require('./command-installer').installShellCommandsInteractively()
 
   subscribeToActiveItem: ->
     @updateWindowTitle()

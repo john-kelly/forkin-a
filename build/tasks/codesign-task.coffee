@@ -27,6 +27,7 @@ module.exports = (grunt) ->
       return done(error) if error?
 
       cmd = 'codesign'
+      # FIXME codesign is failing b/c shellAppDir is wrong.
       args = ['--deep', '--force', '--verbose', '--sign', 'Developer ID Application: GitHub', grunt.config.get('atom.shellAppDir')]
       spawn {cmd, args}, (error) -> done(error)
 

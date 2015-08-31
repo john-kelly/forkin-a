@@ -18,10 +18,11 @@ url = require 'url'
 _ = require 'underscore-plus'
 
 DefaultSocketPath =
-  if process.platform is 'win32'
-    '\\\\.\\pipe\\atom-sock'
-  else
-    path.join(os.tmpdir(), "atom-#{process.env.USER}.sock")
+  # FIXME Need to figure out how to configure the SocketPath on win32
+  # if process.platform is 'win32'
+  #   '\\\\.\\pipe\\atom-sock'
+  # else
+  path.join(os.tmpdir(), "myapp-#{process.env.USER}.sock")
 
 # The application's singleton class.
 #
@@ -46,11 +47,19 @@ class AtomApplication
       createAtomApplication()
       return
 
+    # Try and connect to the TCP Server managing renderer processes.
     client = net.connect {path: options.socketPath}, ->
+      # Pass the data to the server so that a new renderer process can spawn
+      # off of the main browser process.
       client.write JSON.stringify(options), ->
+        # End the client connection b/c there is not more data to send.
         client.end()
+        # Terminate this new browser process b/c the Server will handle creating
+        # a new renderer processes off of the main browser process.
         app.terminate()
 
+    # If the connection to the server fails, this must be the first time that
+    # we are opening the application, so create the singleton.
     client.on 'error', createAtomApplication
 
   windows: null
@@ -78,7 +87,9 @@ class AtomApplication
     @applicationMenu = new ApplicationMenu(@version, @autoUpdateManager)
     @atomProtocolHandler = new AtomProtocolHandler(@resourcePath, @safeMode)
 
+    # Setup the TCP server to listen for new atom processes.
     @listenForArgumentsFromNewProcess()
+
     @setupJavaScriptArguments()
     @handleEvents()
     @storageFolder = new StorageFolder(process.env.ATOM_HOME)
